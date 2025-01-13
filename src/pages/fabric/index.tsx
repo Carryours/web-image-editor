@@ -9,15 +9,20 @@ import { Button } from 'antd';
 const imgURL = 'https://p3-sign.toutiaoimg.com/tos-cn-i-axegupay5k/dec58baca8ca4c609294026d1504aa9e~tplv-tt-origin-web:gif.jpeg?_iz=58558&from=article.pc_detail&lk3s=953192f4&x-expires=1736838466&x-signature=vQgyQgrhHyeS3rInO8HorKoWbtg%3D';
 const FabricJSCanvas = () => {
   const canvasEl = useRef<HTMLCanvasElement>(null);
+  const cropCanvasEl = useRef<HTMLCanvasElement>(null);
+
   const [cropImgURl, setCropImgURl] = useState()
   const [imgObject, setImgObject] = useState<FabricImage>()
   const [cropRect, setCropRect] = useState<Rect>()
+  const [canvasContainer, setCanvasContainer] = useState<Canvas>()
+  const [cropContainer, setCropContainer] = useState<Canvas>()
+
   useEffect(() => {
     const rect = new Rect({
-      left: 50,
-      top: 50,
-      width: 100,
-      height: 100,
+      left: 0,
+      top: 0,
+      width: 200,
+      height: 200,
       fill: 'rgba(0,0,0,0.3)',
       selectable: true,
       hasBorders: true,
@@ -25,9 +30,15 @@ const FabricJSCanvas = () => {
       lockRotation: true,
       centeredRotation: true
     })
-    if (!canvasEl.current) return;
-    const canvas = new Canvas(canvasEl.current);
-    // const img = fabric.FabricImage.fromURL(reactLogo);
+    if(!canvasEl.current || !cropCanvasEl.current) {
+      return;
+    }
+
+    const cropCanvas = new Canvas(cropCanvasEl.current)
+    setCropContainer(cropCanvas)
+    const canvas = new Canvas(canvasEl?.current);
+    setCanvasContainer(canvas)
+
     const img = FabricImage.fromURL(imgURL,{},{
       hasControls: false,
       selectable: false
@@ -38,18 +49,17 @@ const FabricJSCanvas = () => {
       //   selectable: false
       // })
       setImgObject(container);
-      setCropRect(rect);
       canvas.add(container, rect);
       canvas.bringObjectToFront(rect)
-
+      
       rect.on('moving', () => {
         const bounding = container.getBoundingRect();
         const objectBounding = rect.getBoundingRect();
-  
+        
         if (objectBounding.left < bounding.left) {
-          rect.set('left', bounding.left);
-        }
-        if (objectBounding.top < bounding.top) {
+          // rect.set('left', bounding.left);
+          return
+        } else if (objectBounding.top < bounding.top) {
           // rect.set('top', bounding.top);
           return
         }
@@ -63,50 +73,41 @@ const FabricJSCanvas = () => {
         }
         
         rect.setCoords();
+        setCropRect(rect);
       });
-      // rect.on('modified', () => {
-      //   const { left, top, width, height } = rect;
-          
-      //   img.set({
-      //     cropX: left - img.left!,
-      //     cropY: top - img.top!,
-      //     width: width,
-      //     height: height,
-      //     dirty: true,
-      //   });
-  
-      //   canvas.renderAll();
-      // });
     })
     return () => {
-      // updateCanvasContext(null);
+      cropCanvas.dispose()
       canvas.dispose();
     }
   }, []);
   const handleCrop = () => {
     if(imgObject && cropRect) {
-      // console.log(imgObject, cropRect)
-      const cropImg = FabricImage.fromURL(imgURL, {}, {
-        // cropX: cropRect.getX(),
-        // cropY: cropRect.getY(),
-        // width: cropRect.width,
-        // height: cropRect.height
-        width: 100,
-        height: 100
+      FabricImage.fromURL(imgURL).then(cropItem => {
+        cropItem.set({
+          cropX: cropRect.getX(),
+          cropY: cropRect.getY(),
+          height: cropRect.height,
+          width: cropRect.width
+        })
+        cropContainer?.add(cropItem)
       })
-      cropImg.then(data => {
-        setCropImgURl(data.getSrc())
-      })
-      // setCropImg(dataURL)
-      // setCropImgURl(dataURL)
     }
   }
   return (
     <>
-      <img src={ reactLogo }></img>
       <img src={cropImgURl}></img>
-      <canvas width="626" height="352" ref={canvasEl}/>
-      <Button onClick={handleCrop}>裁切</Button>
+      <div className="flex items-center">
+        <div>
+          <canvas width="626" height="352" ref={canvasEl}/>
+        </div>
+        <div className='mx-4'>
+          <Button onClick={handleCrop}>裁切</Button>
+        </div>
+        <div>
+         <canvas width="626" height="352" ref={cropCanvasEl}/>
+        </div>
+      </div>
     </>
   );
 };
