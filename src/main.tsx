@@ -5,7 +5,7 @@ import "./index.css";
 import Cropper from './pages/cropper'
 import Fabric from './pages/fabric'
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router";
-let navigate = useNavigate()
+// let navigate = useNavigate()
 
 import { Menu } from 'antd'
 const MenuItems = [
@@ -24,9 +24,9 @@ const MenuItems = [
 ]
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Menu onClick={(e)=> {
-      navigate(e.path)
-    }} items={MenuItems}></Menu>
+    {/* <Menu onClick={(e)=> {
+      navigate(e?.path)
+    }} items={MenuItems}></Menu> */}
     <BrowserRouter>
       {/* <App /> */}
       <Routes>
