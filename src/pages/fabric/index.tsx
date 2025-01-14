@@ -1,12 +1,12 @@
 
 // import { useNavigate } from "react-router";
 import { useEffect, useRef, useState } from 'react';
-import  { Canvas, FabricImage, Rect } from 'fabric';
-import reactLogo from '../../assets/react.svg'
+import  { Canvas, FabricImage, Rect, TBBox } from 'fabric';
+// import reactLogo from '../../assets/react.svg'
 import { Button } from 'antd';
 // import { type FabricImage as FabricImageType } from 'fabric';
 
-const imgURL = 'https://p3-sign.toutiaoimg.com/tos-cn-i-axegupay5k/dec58baca8ca4c609294026d1504aa9e~tplv-tt-origin-web:gif.jpeg?_iz=58558&from=article.pc_detail&lk3s=953192f4&x-expires=1736838466&x-signature=vQgyQgrhHyeS3rInO8HorKoWbtg%3D';
+const imgURL = '@/assets/temp.jpg'
 const FabricJSCanvas = () => {
   const canvasEl = useRef<HTMLCanvasElement>(null);
   const cropCanvasEl = useRef<HTMLCanvasElement>(null);
@@ -18,7 +18,7 @@ const FabricJSCanvas = () => {
   const [cropContainer, setCropContainer] = useState<Canvas>()
 
   useEffect(() => {
-    const rect = new Rect({
+    const rect: Rect = new Rect({
       left: 0,
       top: 0,
       width: 200,
@@ -34,15 +34,15 @@ const FabricJSCanvas = () => {
       return;
     }
 
-    const cropCanvas = new Canvas(cropCanvasEl.current)
+    const cropCanvas: Canvas = new Canvas(cropCanvasEl.current)
     setCropContainer(cropCanvas)
-    const canvas = new Canvas(canvasEl?.current);
+    const canvas: Canvas = new Canvas(canvasEl?.current);
     setCanvasContainer(canvas)
 
-    const img = FabricImage.fromURL(imgURL,{},{
+    const img: Promise<FabricImage> = FabricImage.fromURL(imgURL,{},{
       hasControls: false,
       selectable: false
-    }) as any;
+    })
     img.then((container: FabricImage) => {
       // canvas.setActiveObject(img);
       // img.set({
@@ -53,8 +53,8 @@ const FabricJSCanvas = () => {
       canvas.bringObjectToFront(rect)
       
       rect.on('moving', () => {
-        const bounding = container.getBoundingRect();
-        const objectBounding = rect.getBoundingRect();
+        const bounding: TBBox = container.getBoundingRect();
+        const objectBounding: TBBox = rect.getBoundingRect();
         
         if (objectBounding.left < bounding.left) {
           // rect.set('left', bounding.left);
