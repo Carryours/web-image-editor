@@ -1,4 +1,4 @@
-const imgURL = '@/assets/temp.jpg'
+const imgURL = '/publi/temp.jpg'
 import { useEffect, useRef, useState } from "react";
 import Cropper from "cropperjs";
 import 'cropperjs/dist/cropper.css';

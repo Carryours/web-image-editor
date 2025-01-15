@@ -6,7 +6,7 @@ import  { Canvas, FabricImage, Rect, TBBox } from 'fabric';
 import { Button } from 'antd';
 // import { type FabricImage as FabricImageType } from 'fabric';
 
-const imgURL = '@/assets/temp.jpg'
+const imgURL = '/public/temp.jpg'
 const FabricJSCanvas = () => {
   const canvasEl = useRef<HTMLCanvasElement>(null);
   const cropCanvasEl = useRef<HTMLCanvasElement>(null);
