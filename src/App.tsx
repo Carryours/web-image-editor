@@ -40,13 +40,13 @@ const App = () => {
     }
   ]
   useEffect(() => {
-    console.log(location)
     const pathName = location.pathname.split('/')[1]
     setCurrent(pathName)
     return () => {
+      setCurrent(pathName)
       console.log('unmount')
     }
-  }, [])
+  }, [current])
   const handleMenuItemClick: MenuProps['onClick'] = (e) => {
     setCurrent(e.key)
     navigate(e.key)

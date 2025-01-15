@@ -23,7 +23,7 @@ const Main = () => {
 };
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
+  // <StrictMode>
     <Main />
-  </StrictMode>
+  // </StrictMode>
 );
