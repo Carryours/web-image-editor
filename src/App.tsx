@@ -1,35 +1,67 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router'
 import './App.css'
 
+import type { MenuProps } from 'antd';
 import { Menu } from 'antd'
-function App() {
-  const [count, setCount] = useState(0)
-
+type MenuItem = Required<MenuProps>['items'][number]
+const App = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [current, setCurrent] = useState('');
+  const MenuItems: MenuItem[]  = [
+    {
+      // label: (
+      //   <a 
+      //   className={'color-red' }
+      //   onClick={() => {
+      //     console.log(current)
+      //     navigate('fabric')
+      //     setCurrent('fabric')
+      //   }}
+      //   >
+      //     Fabrics
+      //   </a>
+      // ),
+      label: 'Fabrics',
+      key: 'fabric',
+    },
+    {
+      // label: (
+      //   <a onClick={() => {
+      //     navigate('cropper')
+      //     setCurrent('cropper')
+      //   }}>
+      //     cropper
+      //   </a>
+      // ),
+      label: 'Cropper',
+      key: 'cropper',
+    }
+  ]
+  useEffect(() => {
+    console.log(location)
+    const pathName = location.pathname.split('/')[1]
+    setCurrent(pathName)
+    return () => {
+      console.log('unmount')
+    }
+  }, [])
+  const handleMenuItemClick: MenuProps['onClick'] = (e) => {
+    setCurrent(e.key)
+    navigate(e.key)
+  };
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="App">
+      <Menu
+        theme={'dark'}
+        onClick={handleMenuItemClick}
+        mode="horizontal"
+        defaultSelectedKeys={['fabric']}
+        selectedKeys={[current]}
+        items={MenuItems}
+      />
+    </div>
   )
 }
 

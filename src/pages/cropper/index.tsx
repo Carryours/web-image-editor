@@ -18,9 +18,6 @@ function CropperImg() {
     //   image
     // }
   }, []);
-  const update = () => {
-
-  }
   const initCropper = () => {
     if(!imgEl.current) return;
     cropper = new Cropper(imgEl.current, {
@@ -33,7 +30,7 @@ function CropperImg() {
             .setData(croppedData)
             .setCanvasData(canvasData)
             .setCropBoxData(cropBoxData);
-
+          
           setCroppedData({});
           setCanvasData({});
           setCropBoxData({});
