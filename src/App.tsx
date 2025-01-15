@@ -41,7 +41,7 @@ const App = () => {
   ]
   useEffect(() => {
     const pathName = location.pathname.split('/')[1]
-    setCurrent(pathName)
+    setCurrent(pathName || 'fabric')
     return () => {
       console.log('unmount')
     }

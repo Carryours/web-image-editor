@@ -31,12 +31,12 @@ const FabricJSCanvas = () => {
     }
     const cropCanvas: Canvas = new Canvas(cropCanvasEl.current, {
       width: 1200,
-      height: 500
+      height: 550
     })
     const canvas: Canvas = new Canvas(canvasEl?.current,
       {
         width: 1200,
-        height: 500
+        height: 550
       }
     );
     // setCanvasContainer(canvas)
@@ -56,6 +56,19 @@ const FabricJSCanvas = () => {
         left: (canvas.width - container.width * localScale) / 2,
         top: (canvas.height - container.height * localScale) / 2,
       })
+   
+      canvas.set({
+        left: (canvas.width - container.width * localScale) / 2,
+        top: (canvas.height - container.height * localScale) / 2,
+        scale
+      })
+      cropCanvas.set({
+        left: (canvas.width - container.width * localScale) / 2,
+        top: (canvas.height - container.height * localScale) / 2,
+        scale
+      })
+      setCropContainer(cropCanvas)
+      
       const rect: Rect = new Rect({
         left: 0,
         top: 0,
@@ -68,18 +81,6 @@ const FabricJSCanvas = () => {
         lockRotation: true,
         centeredRotation: true
       })
-      
-      canvas.set({
-        left: (canvas.width - container.width * localScale) / 2,
-        top: (canvas.height - container.height * localScale) / 2,
-        scale
-      })
-      cropCanvas.set({
-        left: (canvas.width - container.width * localScale) / 2,
-        top: (canvas.height - container.height * localScale) / 2,
-        scale
-      })
-
       // container.set({
       //   width: Math.min(container.width, window.innerWidth),
       //   height: container.height,
@@ -109,7 +110,6 @@ const FabricJSCanvas = () => {
       });
       canvas.add(container, rect);
       canvas.bringObjectToFront(rect)
-      setCropContainer(cropCanvas)
       setImgObject(container);
       setScale(localScale)
       setCropRect(rect);
@@ -129,8 +129,8 @@ const FabricJSCanvas = () => {
           top,
           cropX: cropRect.getX() / scale,
           cropY: cropRect.getY()/ scale,
-          height: cropRect.height / scale,
-          width: cropRect.width / scale,
+          height: cropRect.height/ scale,
+          width: cropRect.width/ scale,
         })
         cropContainer?.clear()
         cropContainer?.add(cropItem)
@@ -176,7 +176,7 @@ const FabricJSCanvas = () => {
         </div>
         <div className='my-4'>
           <Button onClick={handleCrop}>裁切</Button>
-          <Button onClick={handleDownLoad}>下载</Button>
+          <Button className="ml-2" onClick={handleDownLoad}>下载</Button>
         </div>
         <div>
          <canvas ref={cropCanvasEl}/>

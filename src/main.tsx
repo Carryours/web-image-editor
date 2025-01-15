@@ -4,12 +4,12 @@ import "./index.css";
 import App from "./App.tsx";
 import Cropper from './pages/cropper'
 import Fabric from './pages/fabric'
-import { BrowserRouter, Routes, Route } from "react-router";
+import { Routes, Route, HashRouter } from "react-router";
 
 const Main = () => {
   return (
     <>
-      <BrowserRouter>
+      <HashRouter>
         <App></App>
         <Routes>
           {/* <Route index element={<App />}></Route> */}
@@ -17,13 +17,13 @@ const Main = () => {
           <Route path="fabric" element={<Fabric />} />
           <Route path="cropper" element={<Cropper />} />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </>
   );
 };
 
 createRoot(document.getElementById("root")!).render(
-  // <StrictMode>
+  <StrictMode>
     <Main />
-  // </StrictMode>
+  </StrictMode>
 );
