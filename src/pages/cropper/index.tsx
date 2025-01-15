@@ -1,4 +1,4 @@
-const imgURL = '/publi/temp.jpg'
+const imgURL = '/temp.jpg'
 import { useEffect, useRef, useState } from "react";
 import Cropper from "cropperjs";
 import 'cropperjs/dist/cropper.css';
@@ -74,7 +74,7 @@ function CropperImg() {
       setCropData({
         cropped: true,
         cropping: false,
-        previousUrl: imgURL,
+        previousUrl: `${imgURL}`,
         url: cropper.getCroppedCanvas({
           fillColor: '#fff',
         }).toDataURL(),
