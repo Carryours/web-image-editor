@@ -1,5 +1,5 @@
 const imgURL = '/temp.jpg'
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Cropper from "cropperjs";
 import 'cropperjs/dist/cropper.css';
 import './index.css'
@@ -24,14 +24,10 @@ function CropperImg() {
   const [cropper, setCropper] = useState<Cropper | null>(null);
 
   // const [loaded] = useState<Boolean>(false)
-  const [croppedData, setCroppedData] = useState<Cropper.SetCanvasDataOptions>({});
-  const [canvasData, setCanvasData] = useState<Cropper.SetCanvasDataOptions>({});
-  const [cropBoxData, setCropBoxData] = useState<Cropper.SetCropBoxDataOptions>({});
-  useEffect(() => {
-    // return {
-    //   image
-    // }
-  }, []);
+  // const [croppedData, setCroppedData] = useState<Cropper.SetCanvasDataOptions>({});
+  // const [canvasData, setCanvasData] = useState<Cropper.SetCanvasDataOptions>({});
+  // const [cropBoxData, setCropBoxData] = useState<Cropper.SetCropBoxDataOptions>({});
+
   const initCropper = () => {
     if(!imgEl.current) return;
     const cropperInstance = new Cropper(imgEl.current, {
@@ -39,19 +35,20 @@ function CropperImg() {
       autoCrop: false,
       dragMode: "none",
       background: false,
-      ready: () => {
-        if (croppedData) {
-          cropper?.crop()
-            .setData(croppedData)
-            .setCanvasData(canvasData)
-            .setCropBoxData(cropBoxData);
+      // ready: () => {
+      //   if (croppedData) {
+      //     cropper?.crop()
+      //       .setData(croppedData)
+      //       .setCanvasData(canvasData)
+      //       .setCropBoxData(cropBoxData);
           
-          setCroppedData({});
-          setCanvasData({});
-          setCropBoxData({});
-        }
-      },
+      //     setCroppedData({});
+      //     setCanvasData({});
+      //     setCropBoxData({});
+      //   }
+      // },
       crop({ detail }) {
+        console.log('crop')
         if (detail.width > 0 && detail.height > 0 && !cropData.cropping) {
           setCropData({
             cropping: true
@@ -66,29 +63,29 @@ function CropperImg() {
     cropper?.setDragMode('crop')
   }
   const handleCrop = () => {
-      if (cropData.cropping && cropper) {
-      //  croppedData = cropper.getData();
-      setCroppedData(cropper.getData())
-      setCanvasData(cropper.getCanvasData())
-      setCropBoxData(cropper.getCropBoxData())
-      setCropData({
-        cropped: true,
-        cropping: false,
-        previousUrl: `${imgURL}`,
-        url: cropper.getCroppedCanvas({
-          fillColor: '#fff',
-        }).toDataURL(),
-      })
-        // this.update({
-        //   cropped: true,
-        //   cropping: false,
-        //   previousUrl: data.url,
-        //   url: cropper.getCroppedCanvas(data.type === 'image/png' ? {} : {
-        //     fillColor: '#fff',
-        //   }).toDataURL(data.type),
-        // });
-        // this.stop();
-      }
+    if (cropData.cropping && cropper) {
+    //  croppedData = cropper.getData();
+    // setCroppedData(cropper.getData())
+    // setCanvasData(cropper.getCanvasData())
+    // setCropBoxData(cropper.getCropBoxData())
+    setCropData({
+      cropped: true,
+      cropping: false,
+      previousUrl: `${imgURL}`,
+      url: cropper.getCroppedCanvas({
+        fillColor: '#fff',
+      }).toDataURL(),
+    })
+      // this.update({
+      //   cropped: true,
+      //   cropping: false,
+      //   previousUrl: data.url,
+      //   url: cropper.getCroppedCanvas(data.type === 'image/png' ? {} : {
+      //     fillColor: '#fff',
+      //   }).toDataURL(data.type),
+      // });
+      // this.stop();
+    }
   };
 
   const handleDownload = () => {

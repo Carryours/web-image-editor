@@ -1,9 +1,10 @@
-import { StrictMode } from "react";
+// import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
 import Cropper from './pages/cropper'
 import Fabric from './pages/fabric'
+import Watermark from "./pages/fabric/Watermark.tsx";
 import { Routes, Route, HashRouter } from "react-router";
 
 const Main = () => {
@@ -15,6 +16,7 @@ const Main = () => {
           {/* <Route index element={<App />}></Route> */}
           <Route index element={<Fabric />} />
           <Route path="fabric" element={<Fabric />} />
+          <Route path="fabric-watermark" element={<Watermark />} />
           <Route path="cropper" element={<Cropper />} />
         </Routes>
       </HashRouter>
@@ -23,7 +25,7 @@ const Main = () => {
 };
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
+  // <StrictMode>
     <Main />
-  </StrictMode>
+  // </StrictMode>
 );

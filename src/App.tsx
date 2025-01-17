@@ -37,6 +37,10 @@ const App = () => {
       // ),
       label: 'Cropper',
       key: 'cropper',
+    },
+    {
+      label: 'WaterMark',
+      key: 'fabric-watermark',
     }
   ]
   useEffect(() => {

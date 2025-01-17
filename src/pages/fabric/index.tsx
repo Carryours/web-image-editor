@@ -5,15 +5,28 @@ import  { Canvas, FabricImage, Rect, TBBox } from 'fabric';
 // import reactLogo from '../../assets/react.svg'
 import { Button } from 'antd';
 // import { type FabricImage as FabricImageType } from 'fabric';
-
+// import debounce from 'lodash/debounce'
 const imgURL = '/temp.jpg'
+
+const getImageSize = () => {
+  return new Promise<{ width: number, height: number }>((resolve) => {
+    const img = new Image();
+    img.src = imgURL;
+    img.onload = () => {
+      resolve({
+        width: img.width / 2,
+        height: img.height / 2
+      })
+    }
+  })
+}
 const FabricJSCanvas = () => {
   const canvasEl = useRef<HTMLCanvasElement>(null);
   const cropCanvasEl = useRef<HTMLCanvasElement>(null);
   const [imgObject, setImgObject] = useState<FabricImage>()
   const [cropObject, setCropObject] = useState<FabricImage>()
   const [cropRect, setCropRect] = useState<Rect>()
-  // const [canvasContainer, setCanvasContainer] = useState<Canvas>()
+  const [canvasContainer, setCanvasContainer] = useState<Canvas>()
   const [cropContainer, setCropContainer] = useState<Canvas>()
   const [scale, setScale] = useState(0)
   let left = 0;
@@ -29,112 +42,150 @@ const FabricJSCanvas = () => {
     if(!canvasEl.current || !cropCanvasEl.current) {
       return;
     }
-    const cropCanvas: Canvas = new Canvas(cropCanvasEl.current, {
-      width: 1200,
-      height: 550
-    })
-    const canvas: Canvas = new Canvas(canvasEl?.current,
-      {
-        width: 1200,
-        height: 550
-      }
-    );
-    // setCanvasContainer(canvas)
-
-    const img: Promise<FabricImage> = FabricImage.fromURL(imgURL,{},{
-      hasControls: false,
-      selectable: false,
-    })
-    img.then((container: FabricImage) => {
-      const scaleX = canvas.width / container.width;
-      const scaleY = canvas.height / container.height;
-      let localScale = Math.min(scaleX, scaleY)
-      left = (canvas.width - container.width * localScale) / 2;
-      top = (canvas.height - container.height * localScale) / 2
-      container.scale(localScale);
-      container.set({
-        left: (canvas.width - container.width * localScale) / 2,
-        top: (canvas.height - container.height * localScale) / 2,
+    const cropCanvas: Canvas = new Canvas(cropCanvasEl.current!)
+    const canvas: Canvas = new Canvas(canvasEl.current!)
+    getImageSize().then((size) => {
+      canvas.setDimensions({
+        width: size.width,
+        height: size.height
       })
-   
-      canvas.set({
-        left: (canvas.width - container.width * localScale) / 2,
-        top: (canvas.height - container.height * localScale) / 2,
-        scale
+      cropCanvas.setDimensions({
+        width: size.width,
+        height: size.height
       })
-      cropCanvas.set({
-        left: (canvas.width - container.width * localScale) / 2,
-        top: (canvas.height - container.height * localScale) / 2,
-        scale
-      })
-      setCropContainer(cropCanvas)
+      setCanvasContainer(canvas)
       
-      const rect: Rect = new Rect({
-        left: 0,
-        top: 0,
-        width: 200,
-        height: 200,
-        fill: 'rgba(0,0,0,0.3)',
-        selectable: true,
-        hasBorders: true,
-        hasControls: true,
-        lockRotation: true,
-        centeredRotation: true
+      const img: Promise<FabricImage> = FabricImage.fromURL(imgURL,{},{
+        hasControls: false,
+        selectable: false,
+        scaleX: 0.5,
+        scaleY: 0.5,
       })
-      // container.set({
-      //   width: Math.min(container.width, window.innerWidth),
-      //   height: container.height,
-      // })
-      rect.on('moving', () => {
-        const bounding: TBBox = container.getBoundingRect();
-        const objectBounding: TBBox = rect.getBoundingRect();
-        
-        if (objectBounding.left < bounding.left) {
-          // rect.set('left', bounding.left);
-          return
-        } else if (objectBounding.top < bounding.top) {
-          // rect.set('top', bounding.top);
-          return
-        }
-        if (objectBounding.left + objectBounding.width > bounding.left + bounding.width) {
-          // rect.set('left', bounding.left + bounding.width - objectBounding.width);
-          return
-        }
-        if (objectBounding.top + objectBounding.height > bounding.top + bounding.height) {
-          // rect.set('top', bounding.top + bounding.height - objectBounding.height);
-          return
-        }
-        
-        rect.setCoords();
-        setCropRect(rect);
-      });
-      canvas.add(container, rect);
-      canvas.bringObjectToFront(rect)
-      setImgObject(container);
-      setScale(localScale)
-      setCropRect(rect);
-    })
+      img.then((container: FabricImage) => {
+        const scaleX = canvas.width / container.width;
+        const scaleY = canvas.height / container.height;
+        let localScale = Math.min(scaleX, scaleY)
+        left = (canvas.width - container.width * localScale) / 2;
+        top = (canvas.height - container.height * localScale) / 2
+        container.scale(localScale);
+        container.set({
+          left: (canvas.width - container.width * localScale) / 2,
+          top: (canvas.height - container.height * localScale) / 2,
+        })
     
+        canvas.set({
+          left: (canvas.width - container.width * localScale) / 2,
+          top: (canvas.height - container.height * localScale) / 2,
+          scale
+        })
+        cropCanvas.set({
+          left: (canvas.width - container.width * localScale) / 2,
+          top: (canvas.height - container.height * localScale) / 2,
+          scale
+        })
+        setCropContainer(cropCanvas)
+        
+        const rect: Rect = new Rect({
+          left: 0,
+          top: 0,
+          width: 200,
+          height: 200,
+          fill: 'rgba(0,0,0,0.3)',
+          selectable: true,
+          hasBorders: true,
+          hasControls: true,
+          lockRotation: true,
+          centeredRotation: true
+        })
+        // container.set({
+        //   width: Math.min(container.width, window.innerWidth),
+        //   height: container.height,
+        // })
+        // rect.on('resizing', (event)=> {
+        //   console.log(event)
+        //   rect.set({
+        //     width: event.target.width * event.target.scaleX,
+        //     height: event.target.height * event.target.scaleY,
+        //   })
+
+        //   rect.setCoords();
+
+        // })
+        let rectScaleWidth = rect.width;
+        let rectScaleHeight = rect.height;
+        canvas.on('object:scaling', (event) => {
+          console.log(rect.left, rect.top)
+          rectScaleWidth = rect.width * event.target.scaleX;
+          rectScaleHeight = rect.height * event.target.scaleY;
+            // rect.set({
+            //   width: event.target.width * event.target.scaleX,
+            //   height: event.target.height * event.target.scaleY,
+            //   // width: event.target.width * (event.target.scaleX),
+            //   // height: event.target.height * event.target.scaleY,
+            // })
+          if(event.target === rect) {
+            rect.set({
+              width: rectScaleWidth,
+              height: rectScaleHeight,
+            })
+            rect.setCoords();
+            // rect.setCoords();
+          }
+        })
+        rect.on('moving', () => {
+          const bounding: TBBox = container.getBoundingRect();
+          const objectBounding: TBBox = rect.getBoundingRect();
+          
+          if (objectBounding.left < bounding.left) {
+            // rect.set('left', bounding.left);
+            return
+          } else if (objectBounding.top < bounding.top) {
+            // rect.set('top', bounding.top);
+            return
+          }
+          if (objectBounding.left + objectBounding.width > bounding.left + bounding.width) {
+            // rect.set('left', bounding.left + bounding.width - objectBounding.width);
+            return
+          }
+          if (objectBounding.top + objectBounding.height > bounding.top + bounding.height) {
+            // rect.set('top', bounding.top + bounding.height - objectBounding.height);
+            return
+          }
+          
+          rect.setCoords();
+          setCropRect(rect);
+        });
+        canvas.add(container, rect);
+        canvas.bringObjectToFront(rect)
+        setImgObject(container);
+        setScale(localScale)
+        setCropRect(rect);
+      })
+      
+    })
+
     return () => {
       cropCanvas.dispose()
       canvas.dispose();
     }
+
   }, []);
   const handleCrop = () => {
     if(imgObject && cropRect) {
       FabricImage.fromURL(imgURL).then(cropItem => {
-        console.log(cropRect.getX(), cropRect.getY(), cropRect.width, cropRect.height, scale)
         cropItem.set({
           left,
           top,
           cropX: cropRect.getX() / scale,
           cropY: cropRect.getY()/ scale,
-          height: cropRect.height/ scale,
-          width: cropRect.width/ scale,
+          height: cropRect.height / scale,
+          width: cropRect.width / scale,
         })
-        cropContainer?.clear()
+        // cropContainer?.clear()
         cropContainer?.add(cropItem)
         setCropObject(cropItem)
+        canvasContainer?.remove(cropRect)
+
       })
     }
   }
